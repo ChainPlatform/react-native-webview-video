@@ -117,7 +117,7 @@ export function vimeoHTML(videoId) {
                             sendMessageToParent({ eventType: "infoDelivery", data: { currentTime: time } });
                         }
                     }).catch(function (error) { });
-                }, 1000);
+                }, 250);
             });
             player.on('ended', function () {
                 // console.log("ended ");

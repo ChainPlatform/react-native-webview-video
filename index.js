@@ -1,5 +1,13 @@
 import { Component, createRef } from 'react';
-import { Animated, Platform, View, ActivityIndicator, Pressable, Text } from 'react-native';
+import {
+    Animated,
+    Platform,
+    View,
+    ActivityIndicator,
+    Pressable,
+    Text,
+    AppState
+} from 'react-native';
 import { DEFAULT_USER_AGENT, DEFAULT_YOUTUBE_URL, DEFAULT_VIMEO_URL, getTime } from './src/helpers';
 import { youtubeHTML } from './src/sources/Youtube';
 import { vimeoHTML } from './src/sources/Vimeo';
@@ -25,6 +33,25 @@ export default class Video extends Component {
         };
         this.webVideoRef = createRef();
         this.imageAnimated = new Animated.Value(0);
+    }
+
+    componentDidMount() {
+        this.AppVideoState = AppState.addEventListener('change', this._handleAppStateChange);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
+        this.AppVideoState.remove();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+
+    }
+
+    _handleAppStateChange = currentAppState => {
+        if (currentAppState === 'background' && this.state.playerPlaying) {
+            this.setPlaying();
+        }
     }
 
     onImageLoad = () => {
@@ -131,7 +158,6 @@ export default class Video extends Component {
                 alignItems: 'flex-start',
                 alignSelf: 'flex-start',
                 textAlign: 'flex-start',
-                backgroundColor: "#FFFFFF",
                 width: '100%',
             }}>
             <View pointerEvents="none"
@@ -139,7 +165,6 @@ export default class Video extends Component {
                     alignItems: 'flex-start',
                     alignSelf: 'flex-start',
                     textAlign: 'flex-start',
-                    backgroundColor: "#FFFFFF",
                     width: '100%',
                     aspectRatio: 16 / 9
                 }}>
