@@ -29,8 +29,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://registry.npmjs.org/
-      # - run: npm ci
+      - name: Install dependencies
+        run: |
+            echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+            npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      - run: ls -a
+
+      # - name: Configure git
+      #   run: |
+      #         git config user.email "email@gmail.com"
+      #         git config user.name "James Ives"
+        
+      - run: npm install
+      # - run: npm run-script build
+      - run: npm ci
       - run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
