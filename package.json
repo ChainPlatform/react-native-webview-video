@@ -1,0 +1,37 @@
+{
+    "name": "react-native-video-webview",
+    "version": "0.1.0",
+    "description": "react-native-video-webview is a React Native library that provides a Video component that renders media content such as videos with custom controls for react-native and react-native-web. Support Youtube and Vimeo.",
+    "main": "index.js",
+    "devDependencies": {
+        "react": "*",
+        "react-native": "*"
+    },
+    "author": "Chain Platform <santran686@gmail.com> (https://chainplatform.net/)",
+    "license": "MIT",
+    "keywords": [
+        "react",
+        "react-native",
+        "react-native-svg",
+        "react-native-web",
+        "react-native-video",
+        "react-native-webview",
+        "react-native-video-webview",
+        "@chainplatform/react-native-web-webview"
+    ],
+    "homepage": "https://github.com/ChainPlatform/react-native-video-webview",
+    "bugs": "https://github.com/ChainPlatform/react-native-video-webview/issues",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/ChainPlatform/react-native-video-webview.git"
+    },
+    "dependencies": {},
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*",
+        "react-native-svg": "*",
+        "react-native-web": "*",
+        "react-native-webview": "*",
+        "@chainplatform/react-native-web-webview": "*"
+    }
+}
