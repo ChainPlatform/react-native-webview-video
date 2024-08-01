@@ -151,6 +151,7 @@ export default class Video extends Component {
     }
 
     render() {
+        const content = this.getContent();
         const buttonColor = typeof this.props.buttonColor != "undefined" ? this.props.buttonColor : "#FFFFFF";
         const largeButtonWidth = typeof this.props.largeButtonWidth != "undefined" ? this.props.largeButtonWidth : 60;
         return (<View pointerEvents={this.state.playerReady ? "auto" : "none"}
@@ -168,7 +169,7 @@ export default class Video extends Component {
                     width: '100%',
                     aspectRatio: 16 / 9
                 }}>
-                {this.renderWebview()}
+                {this.renderWebview(content)}
                 {this.renderLoading()}
             </View>
             {
@@ -194,7 +195,7 @@ export default class Video extends Component {
                             onLoad={this.onImageLoad()}
                         />
                         <View style={{
-                            backgroundColor: "#00000030",
+                            backgroundColor: content ? "#00000030" : "transparent",
                             width: '100%',
                             aspectRatio: 16 / 9,
                             alignItems: 'center',
@@ -205,25 +206,27 @@ export default class Video extends Component {
                             bottom: 0,
                             top: 0,
                         }}>
-                            <View style={{
-                                width: largeButtonWidth,
-                                height: largeButtonWidth,
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'flex-start',
-                            }}>
-                                <PlaySVG width={largeButtonWidth} color={buttonColor} />
-                            </View>
+                            {
+                                content ? <View style={{
+                                    width: largeButtonWidth,
+                                    height: largeButtonWidth,
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'flex-start',
+                                }}>
+                                    <PlaySVG width={largeButtonWidth} color={buttonColor} />
+                                </View> : null
+                            }
                         </View>
                     </Pressable>
                     : null
             }
-            {this.renderControls()}
+            {content != null ? this.renderControls() : null}
         </View>);
     }
 
-    renderWebview() {
-        return (<WebView
+    renderWebview(content) {
+        return (content != null ? <WebView
             {...this.props}
             ref={this.webVideoRef}
             allowsFullscreenVideo={false}
@@ -237,14 +240,14 @@ export default class Video extends Component {
             automaticallyAdjustContentInsets={true}
             javaScriptEnabled={true}
             mixedContentMode="compatibility"
-            source={this.getContent()}
+            source={content}
             userAgent={
                 typeof this.props.forceAndroidAutoplay != "undefined"
                     ? Platform.select({ android: DEFAULT_USER_AGENT, ios: '' })
                     : ''
             }
             onShouldStartLoadWithRequest={event => { return true; }}
-        />)
+        /> : null)
     }
 
     renderControls() {
