@@ -1,4 +1,4 @@
-# React Native Video Webview
+# React Native Webview Video
 React Native library that provides a Video component that renders media content such as videos with custom controls for react-native and react-native-web. Support Youtube and Vimeo.
 
 When use react-native-web please guild setup in https://www.npmjs.com/package/@chainplatform/react-native-web-webview
