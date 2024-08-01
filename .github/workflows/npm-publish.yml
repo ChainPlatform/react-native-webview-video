@@ -42,7 +42,7 @@ jobs:
       #         git config user.email "email@gmail.com"
       #         git config user.name "James Ives"
         
-      - run: npm install
+      # - run: npm install
       # - run: npm run-script build
       # - run: npm ci
       - run: npm publish --provenance --access public
