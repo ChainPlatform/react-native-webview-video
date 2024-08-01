@@ -34,9 +34,9 @@ jobs:
           # cache: 'npm'
         # env:
         #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Install dependencies
-        run: |
-            echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+      # - name: Install dependencies
+      #   run: |
+      #       echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
       - run: npm adduser
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
