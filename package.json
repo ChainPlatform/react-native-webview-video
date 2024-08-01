@@ -25,6 +25,9 @@
         "type": "git",
         "url": "git://github.com/ChainPlatform/react-native-webview-video.git"
     },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
     "dependencies": {},
     "peerDependencies": {
         "react": "*",
