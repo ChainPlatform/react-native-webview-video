@@ -16,6 +16,7 @@ import PauseSVG from './src/icons/PauseSVG';
 import VolumeOffSVG from './src/icons/VolumeOffSVG';
 import VolumeOnSVG from './src/icons/VolumeOnSVG';
 import WebView from 'react-native-webview';
+import ReplaySVG from './src/icons/ReplaySVG';
 
 export default class Video extends Component {
     constructor(props) {
@@ -214,7 +215,9 @@ export default class Video extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'flex-start',
                                 }}>
-                                    <PlaySVG width={largeButtonWidth} color={buttonColor} />
+                                    {!this.state.playerPlaying && this.state.onPlay ?
+                                        <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
+                                        <PlaySVG width={largeButtonWidth} color={buttonColor} />}
                                 </View> : null
                             }
                         </View>
@@ -288,7 +291,9 @@ export default class Video extends Component {
                     {
                         this.state.playerPlaying ?
                             <PauseSVG width={buttonWidth} color={buttonColor} /> :
-                            <PlaySVG width={buttonWidth} color={buttonColor} />
+                            (!this.state.playerPlaying && this.state.onPlay ?
+                                <ReplaySVG width={buttonWidth} color={buttonColor} /> :
+                                <PlaySVG width={buttonWidth} color={buttonColor} />)
                     }
                 </Pressable>
                 <Pressable style={{
