@@ -74,6 +74,7 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
                 doubleClick: false
             },
                 hotkeys: false,
+            preload: 'metadata',
                 autoplay: false,
                 controls: false,
                 loop: false,
@@ -90,12 +91,12 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
         tag.onload = () => {
             player = videojs('player', options, function onPlayerReady() {
                 // var duration = player.duration();
-                // sendMessageToParent({ eventType: "playerReady", data: null });
+                sendMessageToParent({ eventType: "playerReady", data: null });
                 // sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
             });
             player.one("loadedmetadata", () => {
                 var duration = player.duration();
-                sendMessageToParent({ eventType: "playerReady", data: null });
+                // sendMessageToParent({ eventType: "playerReady", data: null });
                 sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
             });
             player.on('ended', function () {
