@@ -148,12 +148,14 @@ export default class Video extends Component {
                     loadContent = { html: vimeoHTML(videoId, videoType) };
                 }
                 break;
-            default:
+            case "direct":
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
                     loadContent = { uri: DEFAULT_VIDEOJS_URL + '?videoId=' + videoId + '&videoType=' + videoType };
                 } else {
                     loadContent = { html: videoJSHTML(videoId) };
                 }
+                break;
+            default:
                 break;
         }
         return loadContent;
