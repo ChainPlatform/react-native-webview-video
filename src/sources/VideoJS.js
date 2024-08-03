@@ -65,7 +65,6 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
             (window.ReactNativeWebView || window.parent || window).postMessage(JSON.stringify(event), '*');
         }
         let tag = document.createElement('script');
-        if (jsVersion == "") { jsVersion = "8.17.1" }
         tag.src = '${jsLink}';
         let lastTimeUpdate = 0;
         let player;
