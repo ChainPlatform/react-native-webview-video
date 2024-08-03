@@ -8,9 +8,10 @@ import {
     Text,
     AppState
 } from 'react-native';
-import { DEFAULT_USER_AGENT, DEFAULT_YOUTUBE_URL, DEFAULT_VIMEO_URL, getTime } from './src/helpers';
+import { DEFAULT_USER_AGENT, DEFAULT_YOUTUBE_URL, DEFAULT_VIMEO_URL, DEFAULT_VIDEOJS_URL, getTime } from './src/helpers';
 import { youtubeHTML } from './src/sources/Youtube';
 import { vimeoHTML } from './src/sources/Vimeo';
+import { videoJSHTML } from './src/sources/VideoJS';
 import PlaySVG from './src/icons/PlaySVG';
 import PauseSVG from './src/icons/PauseSVG';
 import VolumeOffSVG from './src/icons/VolumeOffSVG';
@@ -128,24 +129,31 @@ export default class Video extends Component {
     }
 
     getContent() {
-        let loadContent;
+        let loadContent = null;
+        const videoId = typeof this.props.videoId != "undefined" ? this.props.videoId : "";
         const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
-        switch (videoType) {
+        const videoSource = typeof this.props.videoSource != "undefined" ? this.props.videoSource : "";
+        switch (videoSource) {
             case "youtube":
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + this.props.videoId };
+                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + videoId + '&videoType=' + videoType };
                 } else {
-                    loadContent = { html: youtubeHTML(this.props.videoId) };
+                    loadContent = { html: youtubeHTML(videoId, videoType) };
                 }
                 break;
             case "vimeo":
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_VIMEO_URL + '?videoId=' + this.props.videoId };
+                    loadContent = { uri: DEFAULT_VIMEO_URL + '?videoId=' + videoId + '&videoType=' + videoType };
                 } else {
-                    loadContent = { html: vimeoHTML(this.props.videoId) };
+                    loadContent = { html: vimeoHTML(videoId, videoType) };
                 }
                 break;
             default:
+                if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
+                    loadContent = { uri: DEFAULT_VIDEOJS_URL + '?videoId=' + videoId + '&videoType=' + videoType };
+                } else {
+                    loadContent = { html: videoJSHTML(videoId, videoType) };
+                }
                 break;
         }
         return loadContent;
@@ -398,13 +406,46 @@ export default class Video extends Component {
         </View>
     }
 
+    setVideoStop() {
+        if (this.webVideoRef && this.webVideoRef.current) {
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "stopVideo", data: null }), '*');
+            if (typeof this.props.videoStop != "undefined") {
+                this.props.videoStop();
+            }
+            this.setState({ playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" });
+        }
+    }
+
+    setVideoPause() {
+        if (this.webVideoRef && this.webVideoRef.current) {
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "pauseVideo", data: null }), '*');
+            if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
+                this.props.videoPause();
+            }
+            this.setState({ playerPlaying: false, onPlay: false });
+        }
+    }
+
+    setVideoPlay() {
+        if (this.webVideoRef && this.webVideoRef.current) {
+            if (!this.state.playerPlaying && this.state.onPlay) {
+                this.setState({ progressBar: "0%", progressTime: "00:00" });
+            }
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "playVideo", data: null }), '*');
+            if (!this.state.playerPlaying && typeof this.props.videoPlaying != "undefined") {
+                this.props.videoPlaying();
+            }
+            this.setState({ playerPlaying: true, onPlay: true });
+        }
+    }
+
     setPlayerReady() {
         this.setState({ playerReady: true });
     }
 
     setStop() {
         this.webVideoRef.current.postMessage(JSON.stringify({ event: "stopVideo", data: null }), '*');
-        this.setState({ playerPlaying: false });
+        this.setState({ playerPlaying: false, progressBar: "100%" });
     }
 
     setPlaying() {

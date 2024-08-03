@@ -42,13 +42,12 @@ export function vimeoHTML(videoId) {
 <body>
     <div class="embed-container"><div id="player"></div></div>
     <script>
-        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId");
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType");
         let tag = document.createElement('script');
         tag.src = "https://player.vimeo.com/api/player.js";
         let lastTimeUpdate = 0;
         let player;
-        const options = {
-            id: '${videoId}',
+        let options = {
             loop: false,
             autopause: false,
             byline: false,
@@ -63,6 +62,11 @@ export function vimeoHTML(videoId) {
             vimeo_logo: false,
             dnt: true
         };
+        if (videoType == "id") {
+            options.id = '${videoId}';
+        } else {
+            options.url = '${videoId}';
+        }
         tag.onload = () => {
             // const iframe = document.querySelector('iframe');
             player = new Vimeo.Player('player', options);
