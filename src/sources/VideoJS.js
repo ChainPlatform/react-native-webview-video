@@ -115,33 +115,33 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
             player.on('error', function (infos) {
                 sendMessageToParent({ eventType: "playerError", data: infos })
             });
+            window.addEventListener("message", function (events) {
+                let infos = events.data;
+                if (typeof events.data != "object") {
+                    infos = JSON.parse(events.data);
+                }
+                switch (infos.event) {
+                    case "playVideo":
+                        player.play();
+                        break;
+                    case "pauseVideo":
+                        player.pause();
+                        break;
+                    case "stopVideo":
+                        player.pause();
+                        break;
+                    case "volumeOff":
+                        player.volume(0);
+                        break;
+                    case "volumeOn":
+                        player.volume(1);
+                        break;
+                }
+            })
         };
         tag.onerror = () => { };
         let firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        window.addEventListener("message", function (events) {
-            let infos = events.data;
-            if (typeof events.data != "object") {
-                infos = JSON.parse(events.data);
-            }
-            switch (infos.event) {
-                case "playVideo":
-                    player.play();
-                    break;
-                case "pauseVideo":
-                    player.pause();
-                    break;
-                case "stopVideo":
-                    player.pause();
-                    break;
-                case "volumeOff":
-                    player.volume(0);
-                    break;
-                case "volumeOn":
-                    player.volume(1);
-                    break;
-            }
-        })
     </script>
 </body>
 
