@@ -442,7 +442,7 @@ export default class Video extends Component {
     }
 
     setPlayerReady() {
-        this.setState({ playerReady: true });
+        this.setState({ playerReady: true, playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" });
     }
 
     setStop() {
