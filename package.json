@@ -1,6 +1,6 @@
 {
     "name": "react-native-webview-video",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "react-native-webview-video is a React Native library that provides a Video component that renders media content such as videos with custom controls for react-native and react-native-web. Support Youtube and Vimeo.",
     "main": "index.js",
     "devDependencies": {

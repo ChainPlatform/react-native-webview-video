@@ -152,7 +152,7 @@ export default class Video extends Component {
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
                     loadContent = { uri: DEFAULT_VIDEOJS_URL + '?videoId=' + videoId + '&videoType=' + videoType };
                 } else {
-                    loadContent = { html: videoJSHTML(videoId, videoType) };
+                    loadContent = { html: videoJSHTML(videoId) };
                 }
                 break;
         }
