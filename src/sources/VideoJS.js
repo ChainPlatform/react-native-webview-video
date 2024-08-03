@@ -74,7 +74,7 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
                 doubleClick: false
             },
                 hotkeys: false,
-            preload: 'metadata',
+                preload: 'auto',
                 autoplay: false,
                 controls: false,
                 loop: false,
