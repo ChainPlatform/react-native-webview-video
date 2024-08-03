@@ -75,13 +75,11 @@
             player.ready().then(function () {
                 // console.log("playerReady ");
                 player.getDuration().then(function (duration) {
+                    sendMessageToParent({ eventType: "playerReady", data: null });
                     // duration = the duration of the video in seconds
                     // console.log('video length is:', duration);
                     sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
-                    // const event = { eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } };
-                    // (window.ReactNativeWebView || window.parent || window).postMessage(JSON.stringify(event), '*');
                 }).catch(function (error) { });
-                sendMessageToParent({ eventType: "playerReady", data: null });
                 player.on('playbackratechange', function (data) {
                     // console.log("playbackratechange ", data);
                     // sendMessageToParent({ eventType: "playbackRateChange", data: data })
