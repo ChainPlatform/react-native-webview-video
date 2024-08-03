@@ -56,20 +56,13 @@
     <div class="embed-container">
         <video id="player" class="video-js"></video>
     </div>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.17.1/video-js.min.css" rel="stylesheet">
     <script>
         const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType"), videoSource = parsedUrl.searchParams.get("videoSource");
         let jsVersion = typeof parsedUrl.searchParams.get("jsVersion") != "undefined" ? parsedUrl.searchParams.get("jsVersion") : "";
-        let cssLink = typeof parsedUrl.searchParams.get("cssLink") != "undefined" ? parsedUrl.searchParams.get("cssLink") : "";
         let jsLink = typeof parsedUrl.searchParams.get("jsLink") != "undefined" ? parsedUrl.searchParams.get("jsLink") : "";
         jsVersion = jsVersion ? jsVersion : "8.17.1";
-        cssLink = cssLink ? cssLink : `https://cdnjs.cloudflare.com/ajax/libs/video.js/${jsVersion}/video-js.min.css`;
-        jsLink = jsLink ? jsLink : `https://cdnjs.cloudflare.com/ajax/libs/video.js/${jsVersion}/video.min.js`;
-        const scriptCSS = document.createElement('link');
-        scriptCSS.src = cssLink;
-        scriptCSS.rel = 'stylesheet';
-        scriptCSS.onload = () => { };
-        scriptCSS.onerror = () => { };
-        document.head.appendChild(scriptCSS);
+        jsLink = jsLink ? jsLink : `https://cdnjs.cloudflare.com/ajax/libs/video.js/8.17.1/video.min.js`;
     </script>
     <script>
         function sendMessageToParent(event) {
@@ -100,12 +93,14 @@
         // type: 'videoType'
         tag.onload = () => {
             player = videojs('player', options, function onPlayerReady() {
-                sendMessageToParent({ eventType: "playerReady", data: null });
-            });
-            player.one("loadedmetadata", () => {
                 var duration = player.duration();
+                sendMessageToParent({ eventType: "playerReady", data: null });
                 sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
             });
+            // player.one("loadedmetadata", () => {
+                // var duration = player.duration();
+                // sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
+            // });
             player.on('ended', function () {
                 sendMessageToParent({ eventType: "playerStateChange", data: 0 });
             });

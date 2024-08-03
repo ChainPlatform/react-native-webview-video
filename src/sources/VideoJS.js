@@ -89,12 +89,14 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
         // type: 'videoType'
         tag.onload = () => {
             player = videojs('player', options, function onPlayerReady() {
-                sendMessageToParent({ eventType: "playerReady", data: null });
-            });
-            player.one("loadedmetadata", () => {
                 var duration = player.duration();
+                sendMessageToParent({ eventType: "playerReady", data: null });
                 sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
             });
+            // player.one("loadedmetadata", () => {
+                // var duration = player.duration();
+                // sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
+            // });
             player.on('ended', function () {
                 sendMessageToParent({ eventType: "playerStateChange", data: 0 });
             });
