@@ -68,30 +68,22 @@ export function vimeoHTML(videoId) {
             options.url = '${videoId}';
         }
         tag.onload = () => {
-            // const iframe = document.querySelector('iframe');
             player = new Vimeo.Player('player', options);
             player.ready().then(function () {
-                // console.log("playerReady ");
                 player.getDuration().then(function (duration) {
                     sendMessageToParent({ eventType: "playerReady", data: null });
-                    // duration = the duration of the video in seconds
-                    // console.log('video length is:', duration);
                     sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
                 }).catch(function (error) {});
                 player.on('playbackratechange', function (data) {
-                    // console.log("playbackratechange ", data);
                     // sendMessageToParent({ eventType: "playbackRateChange", data: data })
                 });
                 player.on('qualitychange', function (data) {
-                    // console.log("qualitychange ", data);
                     // sendMessageToParent({ eventType: "playerQualityChange", data: data })
                 });
                 player.on('error', function (data) {
-                    // console.log("error ", data);
                     sendMessageToParent({ eventType: "playerError", data: data })
                 });
                 player.on('timeupdate', function (infos) {
-                    // console.log("timeupdate ", data);
                     // if (typeof infos.seconds != "undefined") {
                         // var time = Math.floor(infos.seconds);
                         // if (time !== lastTimeUpdate) {
@@ -101,7 +93,6 @@ export function vimeoHTML(videoId) {
                     // }
                 });
                 player.on('progress', function (infos) {
-                    // console.log("progress ", data);
                     // if (typeof infos.seconds != "undefined") {
                     //     sendMessageToParent({ eventType: "initialDelivery", data: { duration: infos.duration, currentTime: infos.seconds } });
                     // }
@@ -109,10 +100,8 @@ export function vimeoHTML(videoId) {
             });
             let updateTime;
             player.on('play', function (data) {
-                // console.log("play ", data);
                 updateTime = setInterval(() => {
                     player.getCurrentTime().then(function (seconds) {
-                        // console.log("seconds ", seconds);
                         var time = Math.floor(seconds);
                         if (time !== lastTimeUpdate) {
                             lastTimeUpdate = time;
@@ -122,7 +111,6 @@ export function vimeoHTML(videoId) {
                 }, 250);
             });
             player.on('ended', function () {
-                // console.log("ended ");
                 if (updateTime) { clearInterval(updateTime); }
                 sendMessageToParent({ eventType: "playerStateChange", data: 0 })
             });
@@ -131,7 +119,6 @@ export function vimeoHTML(videoId) {
         let firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         function sendMessageToParent(event) {
-            // console.log('sendMessageToParent ', event);
             (window.ReactNativeWebView || window.parent || window).postMessage(JSON.stringify(event), '*');
         }
         window.addEventListener("message", function (events) {
@@ -144,13 +131,10 @@ export function vimeoHTML(videoId) {
                     player.play().then(function () { }).catch(function (error) {
                         switch (error.name) {
                             case 'PasswordError':
-                                // The video is password-protected
                                 break;
                             case 'PrivacyError':
-                                // The video is private
                                 break;
                             default:
-                                // Some other error occurred
                                 break;
                         }
                     });
@@ -159,13 +143,10 @@ export function vimeoHTML(videoId) {
                     player.pause().then(function () { }).catch(function (error) {
                         switch (error.name) {
                             case 'PasswordError':
-                                // The video is password-protected
                                 break;
                             case 'PrivacyError':
-                                // The video is private
                                 break;
                             default:
-                                // Some other error occurred
                                 break;
                         }
                     });
@@ -174,13 +155,10 @@ export function vimeoHTML(videoId) {
                     player.pause().then(function () { }).catch(function (error) {
                         switch (error.name) {
                             case 'PasswordError':
-                                // The video is password-protected
                                 break;
                             case 'PrivacyError':
-                                // The video is private
                                 break;
                             default:
-                                // Some other error occurred
                                 break;
                         }
                     });

@@ -32,7 +32,6 @@ export function youtubeHTML(videoId) {
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         var player;
-        // var iframeWindow;
         var lastTimeUpdate = 0;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -56,7 +55,6 @@ export function youtubeHTML(videoId) {
                     onPlaybackQualityChange: onPlaybackQualityChange
                 }
             });
-            // iframeWindow = player.getIframe().contentWindow;
         }
         function onPlayerError(e) {
             sendMessageToParent({ eventType: "playerError", data: e.data })
@@ -81,7 +79,6 @@ export function youtubeHTML(videoId) {
             if (typeof events.data != "object") {
                 infos = JSON.parse(events.data);
             }
-            // if (events.source === iframeWindow) {
             if (infos.event === "infoDelivery" && infos.info && infos.info.currentTime) {
                 var time = Math.floor(infos.info.currentTime);
                 if (time !== lastTimeUpdate) {
@@ -92,7 +89,6 @@ export function youtubeHTML(videoId) {
             if (infos.event === "initialDelivery" && infos.info) {
                 (window.ReactNativeWebView || window.parent || window).postMessage(JSON.stringify({ eventType: infos.event, data: infos.info }), '*');
             }
-            // }
             switch (infos.event) {
                 case "playVideo":
                     player.playVideo();

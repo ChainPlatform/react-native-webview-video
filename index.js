@@ -414,8 +414,8 @@ export default class Video extends Component {
             if (typeof this.props.videoStop != "undefined") {
                 this.props.videoStop();
             }
-            this.setState({ playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" });
         }
+        this.setState({ playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" });
     }
 
     setVideoPause() {
@@ -424,8 +424,8 @@ export default class Video extends Component {
             if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
                 this.props.videoPause();
             }
-            this.setState({ playerPlaying: false, onPlay: false });
         }
+        this.setState({ playerPlaying: false, onPlay: false });
     }
 
     setVideoPlay() {
@@ -437,8 +437,8 @@ export default class Video extends Component {
             if (!this.state.playerPlaying && typeof this.props.videoPlaying != "undefined") {
                 this.props.videoPlaying();
             }
-            this.setState({ playerPlaying: true, onPlay: true });
         }
+        this.setState({ playerPlaying: true, onPlay: true });
     }
 
     setPlayerReady() {
