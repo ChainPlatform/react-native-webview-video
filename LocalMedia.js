@@ -26,6 +26,7 @@ export default class LocalMedia extends Component {
 
     render() {
         const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
+        const height = typeof this.props.height != "undefined" ? this.props.height : 70;
         const content = this.getContent(videoType);
         return (<View pointerEvents={"auto"}
             style={{
@@ -40,7 +41,7 @@ export default class LocalMedia extends Component {
                     alignSelf: 'flex-start',
                     textAlign: 'flex-start',
                     width: '100%'
-                }, videoType == "video" ? { aspectRatio: 16 / 9 } : { height: 54 }]}>
+                }, videoType == "video" ? { aspectRatio: 16 / 9 } : { height: height }]}>
                 {this.renderWebview(content)}
             </View>
         </View>);
