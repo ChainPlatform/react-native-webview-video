@@ -20,7 +20,7 @@ export default class LocalMedia extends Component {
         if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
             loadContent = { uri: DEFAULT_LOCAL_URL + '?videoId=' + videoId + '&videoType=' + videoType };
         } else {
-            loadContent = { html: localJSHTML(videoId) };
+            loadContent = { html: localJSHTML(videoId, videoType) };
         }
         return loadContent;
     }
