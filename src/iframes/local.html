@@ -21,8 +21,10 @@
 </head>
 
 <body>
-    <video id="videoplayer" style="display: none;" controls></video>
-    <audio id="audioplayer" style="display: none;" controls></audio>
+    <video id="videoplayer" controls controlsList="nodownload" oncontextmenu="return false;"
+        style="display: none;"></video>
+    <audio id="audioplayer" controls controlsList="nodownload" oncontextmenu="return false;"
+        style="display: none;"></audio>
     <script>
         const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType");
         document.getElementById('audioplayer').style.display = "none";

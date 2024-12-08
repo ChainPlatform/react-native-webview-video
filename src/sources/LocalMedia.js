@@ -20,8 +20,8 @@ export function localJSHTML(videoId, videoType = "video") {
     </style>
 </head>
 <body>
-    <video id="videoplayer" style="display: none;" controls></video>
-    <audio id="audioplayer" style="display: none;" controls></audio>
+    <video id="videoplayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none;"></video>
+    <audio id="audioplayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none;"></audio>
     <script>
         document.getElementById('audioplayer').style.display = "none";
         document.getElementById('videoplayer').style.display = "none";
