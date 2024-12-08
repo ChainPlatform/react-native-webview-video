@@ -2,6 +2,7 @@ export const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_
 export const DEFAULT_YOUTUBE_URL = 'https://chainplatform.github.io/react-native-video-webview/youtube.html';
 export const DEFAULT_VIMEO_URL = 'https://chainplatform.github.io/react-native-video-webview/vimeo.html';
 export const DEFAULT_VIDEOJS_URL = 'https://chainplatform.github.io/react-native-video-webview/videojs.html';
+export const DEFAULT_LOCAL_URL = 'https://chainplatform.github.io/react-native-video-webview/local.html';
 export function getTime(num) {
     let hours = Math.floor(num / 3600);
     num = num - hours * 3600;

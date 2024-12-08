@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media player</title>
+    <meta charset="utf-8">
+    <meta name="author" content="santran686@gmail.com">
+    <meta name="author" content="chainplatform.net">
+    <style>
+        video,
+        audio {
+            display: none;
+            width: 100%;
+        }
+
+        video {
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <video id="videoplayer" style="display: none;" controls></video>
+    <audio id="audioplayer" style="display: none;" controls></audio>
+    <script>
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType");
+        document.getElementById('audioplayer').style.display = "none";
+        document.getElementById('videoplayer').style.display = "none";
+        let mediaplayer = document.getElementById('audioplayer');
+        if (videoType == "video") {
+            mediaplayer = document.getElementById('videoplayer');
+        }
+        mediaplayer.src = videoId;
+        mediaplayer.style.display = "block";
+    </script>
+</body>
+
+</html>
