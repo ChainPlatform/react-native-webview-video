@@ -13,10 +13,9 @@ export default class LocalMedia extends Component {
         this.webVideoRef = createRef();
     }
 
-    getContent() {
+    getContent(videoType) {
         let loadContent = null;
         const videoId = typeof this.props.videoId != "undefined" ? this.props.videoId : "";
-        const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
         if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
             loadContent = { uri: DEFAULT_LOCAL_URL + '?videoId=' + videoId + '&videoType=' + videoType };
         } else {
@@ -26,7 +25,8 @@ export default class LocalMedia extends Component {
     }
 
     render() {
-        const content = this.getContent();
+        const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
+        const content = this.getContent(videoType);
         return (<View pointerEvents={"auto"}
             style={{
                 alignItems: 'flex-start',

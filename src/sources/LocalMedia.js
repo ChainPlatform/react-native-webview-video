@@ -26,10 +26,10 @@ export function localJSHTML(videoId, videoType = "video") {
         document.getElementById('audioplayer').style.display = "none";
         document.getElementById('videoplayer').style.display = "none";
         let mediaplayer = document.getElementById('audioplayer');
-        if (${videoType} == "video") {
+        if ("${videoType}" == "video") {
             mediaplayer = document.getElementById('videoplayer');
         }
-        mediaplayer.src = ${videoId};
+        mediaplayer.src = "${videoId}";
         mediaplayer.style.display = "block";
     </script>
 </body>
