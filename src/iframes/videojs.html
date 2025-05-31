@@ -58,7 +58,7 @@
     </div>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.17.1/video-js.min.css" rel="stylesheet">
     <script>
-        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType"), videoSource = parsedUrl.searchParams.get("videoSource");
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType"), videoSource = parsedUrl.searchParams.get("videoSource"), liveVideo = parsedUrl.searchParams.get("liveVideo");
         let jsVersion = typeof parsedUrl.searchParams.get("jsVersion") != "undefined" ? parsedUrl.searchParams.get("jsVersion") : "";
         let jsLink = typeof parsedUrl.searchParams.get("jsLink") != "undefined" ? parsedUrl.searchParams.get("jsLink") : "";
         jsVersion = jsVersion ? jsVersion : "8.17.1";
@@ -79,7 +79,7 @@
             },
             preload: 'metadata',
             hotkeys: false,
-            autoplay: false,
+            autoplay: liveVideo,
             controls: false,
             loop: false,
             disablePictureInPicture: true,
@@ -136,6 +136,9 @@
                         break;
                     case "volumeOn":
                         player.volume(1);
+                        break;
+                    case "seekVideo":
+                        player.currentTime(infos.data.seekTo);
                         break;
                 }
             })

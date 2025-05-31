@@ -1,4 +1,4 @@
-export function youtubeHTML(videoId) {
+export function youtubeHTML(videoId, liveVideo) {
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +26,7 @@ export function youtubeHTML(videoId) {
 <body>
     <div id="player"></div>
     <script>
-        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId");
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), liveVideo = parsedUrl.searchParams.get("liveVideo");
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -45,7 +45,7 @@ export function youtubeHTML(videoId) {
                     'rel': 0,
                     'loop': 0,
                     'fs': 0,
-                    'autoplay': 0
+                    'autoplay': ${liveVideo}
                 },
                 events: {
                     onReady: onPlayerReady,
@@ -104,6 +104,9 @@ export function youtubeHTML(videoId) {
                     break;
                 case "volumeOn":
                     player.unMute()
+                    break;
+                case "seekVideo":
+                    player.seekTo(infos.data.seekTo, true);
                     break;
             }
         })

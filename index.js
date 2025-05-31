@@ -18,6 +18,7 @@ import VolumeOffSVG from './src/icons/VolumeOffSVG';
 import VolumeOnSVG from './src/icons/VolumeOnSVG';
 import WebView from 'react-native-webview';
 import ReplaySVG from './src/icons/ReplaySVG';
+import LivingSVG from './src/icons/LivingSVG';
 
 export default class Video extends Component {
     constructor(props) {
@@ -52,7 +53,9 @@ export default class Video extends Component {
 
     _handleAppStateChange = currentAppState => {
         if (currentAppState === 'background' && this.state.playerPlaying) {
-            this.setPlaying();
+            if (typeof this.props.liveVideo == "undefined") {
+                this.setPlaying();
+            }
         }
     }
 
@@ -133,26 +136,28 @@ export default class Video extends Component {
         const videoId = typeof this.props.videoId != "undefined" ? this.props.videoId : "";
         const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
         const videoSource = typeof this.props.videoSource != "undefined" ? this.props.videoSource : "";
+        let liveVideo = typeof this.props.liveVideo != "undefined" ? this.props.liveVideo : false;
         switch (videoSource) {
             case "youtube":
+                liveVideo = liveVideo ? 1 : 0;
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + videoId + '&videoType=' + videoType };
+                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + liveVideo };
                 } else {
-                    loadContent = { html: youtubeHTML(videoId, videoType) };
+                    loadContent = { html: youtubeHTML(videoId, liveVideo, videoType) };
                 }
                 break;
             case "vimeo":
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_VIMEO_URL + '?videoId=' + videoId + '&videoType=' + videoType };
+                    loadContent = { uri: DEFAULT_VIMEO_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + liveVideo };
                 } else {
-                    loadContent = { html: vimeoHTML(videoId, videoType) };
+                    loadContent = { html: vimeoHTML(videoId, liveVideo, videoType) };
                 }
                 break;
             case "direct":
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_VIDEOJS_URL + '?videoId=' + videoId + '&videoType=' + videoType };
+                    loadContent = { uri: DEFAULT_VIDEOJS_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + liveVideo };
                 } else {
-                    loadContent = { html: videoJSHTML(videoId) };
+                    loadContent = { html: videoJSHTML(videoId, liveVideo) };
                 }
                 break;
             default:
@@ -166,12 +171,7 @@ export default class Video extends Component {
         const buttonColor = typeof this.props.buttonColor != "undefined" ? this.props.buttonColor : "#FFFFFF";
         const largeButtonWidth = typeof this.props.largeButtonWidth != "undefined" ? this.props.largeButtonWidth : 60;
         return (<View pointerEvents={this.state.playerReady ? "auto" : "none"}
-            style={{
-                alignItems: 'flex-start',
-                alignSelf: 'flex-start',
-                textAlign: 'flex-start',
-                width: '100%',
-            }}>
+            style={{ alignItems: 'flex-start', alignSelf: 'flex-start', textAlign: 'flex-start', width: '100%' }}>
             <View pointerEvents="none"
                 style={{
                     alignItems: 'flex-start',
@@ -194,9 +194,14 @@ export default class Video extends Component {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        top: 0,
+                        top: 0
                     }}
-                        onPress={() => { this.setPlaying(); }}>
+                        onPress={() => {
+                            if (typeof this.props.liveVideo == "undefined" ||
+                                (typeof this.props.liveVideo != "undefined" && !this.props.liveVideo)) {
+                                this.setPlaying();
+                            }
+                        }}>
                         <Animated.Image
                             source={{ uri: this.props.poster }}
                             style={[{
@@ -215,7 +220,7 @@ export default class Video extends Component {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            top: 0,
+                            top: 0
                         }}>
                             {
                                 content ? <View style={{
@@ -225,9 +230,13 @@ export default class Video extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'flex-start',
                                 }}>
-                                    {!this.state.playerPlaying && this.state.onPlay ?
-                                        <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
-                                        <PlaySVG width={largeButtonWidth} color={buttonColor} />}
+                                    {(typeof this.props.liveVideo == "undefined" ||
+                                        (typeof this.props.liveVideo != "undefined" && !this.props.liveVideo)) ?
+                                        (!this.state.playerPlaying && this.state.onPlay ?
+                                            <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
+                                            <PlaySVG width={largeButtonWidth} color={buttonColor} />)
+                                        : null
+                                    }
                                 </View> : null
                             }
                         </View>
@@ -285,26 +294,24 @@ export default class Video extends Component {
             width: "100%",
             marginTop: -1,
         }]}>
-            <View style={{
-                justifyContent: 'space-between',
-                flexDirection: "row",
-                flex: 1,
-            }}>
+            <View style={{ justifyContent: 'space-between', flexDirection: "row", flex: 1 }}>
                 <Pressable style={{
                     width: buttonWidth,
                     height: buttonWidth,
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'flex-start',
-                }}
-                    onPress={() => { this.setPlaying(); }}>
-                    {
-                        this.state.playerPlaying ?
-                            <PauseSVG width={buttonWidth} color={buttonColor} /> :
-                            (!this.state.playerPlaying && this.state.onPlay ?
-                                <ReplaySVG width={buttonWidth} color={buttonColor} /> :
-                                <PlaySVG width={buttonWidth} color={buttonColor} />)
+                }} onPress={() => {
+                    if (typeof this.props.liveVideo == "undefined") {
+                        this.setPlaying();
                     }
+                }}>
+                    {typeof this.props.liveVideo == "undefined" ? (this.state.playerPlaying ?
+                        <PauseSVG width={buttonWidth} color={buttonColor} /> :
+                        (!this.state.playerPlaying && this.state.onPlay ?
+                            <ReplaySVG width={buttonWidth} color={buttonColor} /> :
+                            <PlaySVG width={buttonWidth} color={buttonColor} />)
+                    ) : <LivingSVG width={buttonWidth} color={buttonColor} />}
                 </Pressable>
                 <Pressable style={{
                     flexDirection: 'column',
@@ -314,27 +321,15 @@ export default class Video extends Component {
                     height: buttonWidth,
                     marginLeft: spacing,
                     marginRight: spacing
-                }}
-                    onPress={() => { this.setVolume(); }}>
+                }} onPress={() => { this.setVolume(); }}>
                     {
                         this.state.volumeOn ?
                             <VolumeOnSVG width={buttonWidth} color={buttonColor} /> :
                             <VolumeOffSVG width={buttonWidth} color={buttonColor} />
                     }
                 </Pressable>
-                <View style={{
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'flex-start',
-                    flexGrow: 1,
-                    flexBasis: 0
-                }}>
-                    <View style={{
-                        justifyContent: 'space-between',
-                        flexDirection: "row",
-                        flex: 1,
-                        width: '100%'
-                    }}>
+                <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', flexGrow: 1, flexBasis: 0 }}>
+                    <View style={{ justifyContent: 'space-between', flexDirection: "row", flex: 1, width: '100%' }}>
                         <View style={{
                             flexDirection: 'column',
                             justifyContent: 'center',
@@ -343,11 +338,7 @@ export default class Video extends Component {
                             marginRight: spacing,
                             minWidth: textContainerMinWidth
                         }}>
-                            <Text style={{
-                                fontSize: textSize,
-                                fontWeight: '600',
-                                color: textColor
-                            }}>{this.state.progressTime}</Text>
+                            <Text style={{ fontSize: textSize, fontWeight: '600', color: textColor }}>{typeof this.props.liveVideo != "undefined" && this.props.liveVideo ? "--:--" : this.state.progressTime}</Text>
                         </View>
                         <View style={{
                             flexDirection: 'column',
@@ -356,7 +347,7 @@ export default class Video extends Component {
                             paddingLeft: spacing,
                             paddingRight: spacing,
                             flexGrow: 1,
-                            flexBasis: 0,
+                            flexBasis: 0
                         }}>
                             <View style={{
                                 flexDirection: 'column',
@@ -397,15 +388,18 @@ export default class Video extends Component {
                             fontWeight: '600',
                             minWidth: textContainerMinWidth
                         }}>
-                            <Text style={{
-                                fontSize: textSize,
-                                color: textColor
-                            }}>{this.state.totalTime}</Text>
+                            <Text style={{ fontSize: textSize, color: textColor }}>{typeof this.props.liveVideo != "undefined" && this.props.liveVideo ? "--:--" : this.state.totalTime}</Text>
                         </View>
                     </View>
                 </View>
             </View>
         </View>
+    }
+
+    seekVideo(seekTo) {
+        if (this.webVideoRef && this.webVideoRef.current) {
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "seekVideo", data: { seekTo: seekTo } }), '*');
+        }
     }
 
     setVideoStop() {
@@ -450,6 +444,16 @@ export default class Video extends Component {
         this.setState({ playerPlaying: false, progressBar: "100%" });
     }
 
+    living() {
+        this.setState({ progressBar: "0%", progressTime: "00:00" });
+        let state = "playVideo";
+        this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
+        if (typeof this.props.videoPlaying != "undefined") {
+            this.props.videoPlaying();
+        }
+        this.setState({ playerPlaying: true, onPlay: true });
+    }
+
     setPlaying() {
         if (!this.state.playerPlaying && this.state.onPlay) {
             this.setState({ progressBar: "0%", progressTime: "00:00" });
@@ -482,6 +486,14 @@ export default class Video extends Component {
                 }
                 if (currentTime > 0) {
                     let progressBar = ((currentTime * 100) / this.state.duration) + "%";
+                    if (typeof this.props.liveVideo != "undefined" && this.props.liveVideo) {
+                        progressBar = "100%";
+                        let playerPlaying = true;
+                        let onPlay = true;
+                        if (this.state.playerPlaying != playerPlaying || this.state.onPlay != onPlay) {
+                            this.setState({ playerPlaying: playerPlaying, onPlay: onPlay });
+                        }
+                    }
                     this.setState({ progressBar: progressBar });
                 }
                 this.setState({ progressTime: progressTime });
@@ -506,12 +518,7 @@ export default class Video extends Component {
                 position: "absolute"
             }}>
                 <ActivityIndicator animating={true}
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        alignSelf: "center"
-                    }}
+                    style={{ flex: 1, alignItems: 'center', justifyContent: 'center', alignSelf: "center" }}
                     size={Platform.OS === "web" ? "large" : "small"}
                     color={typeof this.props.loadingColor != "undefined" ? this.props.loadingColor : "#DDDDDD"}
                 />

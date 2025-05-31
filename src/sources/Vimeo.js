@@ -1,4 +1,4 @@
-export function vimeoHTML(videoId) {
+export function vimeoHTML(videoId, liveVideo) {
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -42,7 +42,7 @@ export function vimeoHTML(videoId) {
 <body>
     <div class="embed-container"><div id="player"></div></div>
     <script>
-        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType");
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType"), liveVideo = parsedUrl.searchParams.get("liveVideo");
         let tag = document.createElement('script');
         tag.src = "https://player.vimeo.com/api/player.js";
         let lastTimeUpdate = 0;
@@ -50,6 +50,7 @@ export function vimeoHTML(videoId) {
         let options = {
             loop: false,
             autopause: false,
+            autoplay: ${liveVideo},
             byline: false,
             cc: false,
             chromecast: false,
@@ -168,6 +169,9 @@ export function vimeoHTML(videoId) {
                     break;
                 case "volumeOn":
                     player.setMuted(false).then(function (muted) { }).catch(function (error) { });
+                    break;
+                case "seekVideo":
+                    player.setCurrentTime(infos.data.seekTo).then(function () { }).catch(function (error) { });
                     break;
             }
         })

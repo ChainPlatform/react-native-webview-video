@@ -1,4 +1,4 @@
-export function localJSHTML(videoId, videoType = "video") {
+export function localJSHTML(videoId, liveVideo, seekTo = 0, videoType = "video") {
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -30,6 +30,7 @@ export function localJSHTML(videoId, videoType = "video") {
             mediaplayer = document.getElementById('videoplayer');
         }
         mediaplayer.src = "${videoId}";
+        mediaplayer.currentTime = "${seekTo}";
         mediaplayer.style.display = "block";
     </script>
 </body>

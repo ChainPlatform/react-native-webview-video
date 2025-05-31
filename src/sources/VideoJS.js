@@ -1,4 +1,4 @@
-export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") {
+export function videoJSHTML(videoId, liveVideo, jsVersion = "", jsLink = "", cssLink = "") {
     jsVersion = jsVersion ? jsVersion : "8.17.1";
     cssLink = cssLink ? cssLink : `https://cdnjs.cloudflare.com/ajax/libs/video.js/${jsVersion}/video-js.min.css`;
     jsLink = jsLink ? jsLink : `https://cdnjs.cloudflare.com/ajax/libs/video.js/${jsVersion}/video.min.js`;
@@ -75,7 +75,7 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
             },
                 hotkeys: false,
                 preload: 'auto',
-                autoplay: false,
+                autoplay: '${liveVideo}',
                 controls: false,
                 loop: false,
                 disablePictureInPicture: true,
@@ -132,6 +132,9 @@ export function videoJSHTML(videoId, jsVersion = "", jsLink = "", cssLink = "") 
                         break;
                     case "volumeOn":
                         player.volume(1);
+                        break;
+                    case "seekVideo":
+                        player.currentTime(infos.data.seekTo);
                         break;
                 }
             })

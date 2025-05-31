@@ -13,21 +13,23 @@ export default class LocalMedia extends Component {
         this.webVideoRef = createRef();
     }
 
-    getContent(videoType) {
+    getContent(videoType, liveVideo, seekTo) {
         let loadContent = null;
         const videoId = typeof this.props.videoId != "undefined" ? this.props.videoId : "";
         if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-            loadContent = { uri: DEFAULT_LOCAL_URL + '?videoId=' + videoId + '&videoType=' + videoType };
+            loadContent = { uri: DEFAULT_LOCAL_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + liveVideo + '&seekTo=' + seekTo };
         } else {
-            loadContent = { html: localJSHTML(videoId, videoType) };
+            loadContent = { html: localJSHTML(videoId, liveVideo, seekTo, videoType) };
         }
         return loadContent;
     }
 
     render() {
         const videoType = typeof this.props.videoType != "undefined" ? this.props.videoType : "";
+        const seekTo = typeof this.props.seekTo != "undefined" ? this.props.seekTo : "";
+        const liveVideo = typeof this.props.liveVideo != "undefined" ? this.props.liveVideo : false;
         const height = typeof this.props.height != "undefined" ? this.props.height : 70;
-        const content = this.getContent(videoType);
+        const content = this.getContent(videoType, liveVideo, seekTo);
         return (<View pointerEvents={"auto"}
             style={{
                 alignItems: 'flex-start',

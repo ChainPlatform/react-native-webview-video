@@ -26,7 +26,7 @@
     <audio id="audioplayer" controls controlsList="nodownload" oncontextmenu="return false;"
         style="display: none;"></audio>
     <script>
-        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType");
+        const parsedUrl = new URL(window.location.href), videoId = parsedUrl.searchParams.get("videoId"), videoType = parsedUrl.searchParams.get("videoType"), seekTo = parsedUrl.searchParams.get("seekTo");
         document.getElementById('audioplayer').style.display = "none";
         document.getElementById('videoplayer').style.display = "none";
         let mediaplayer = document.getElementById('audioplayer');
@@ -34,6 +34,7 @@
             mediaplayer = document.getElementById('videoplayer');
         }
         mediaplayer.src = `${videoId}`;
+        mediaplayer.currentTime = `${seekTo}`;
         mediaplayer.style.display = "block";
     </script>
 </body>
