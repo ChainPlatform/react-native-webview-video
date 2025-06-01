@@ -47,8 +47,7 @@ export function youtubeHTML(videoId, liveVideo) {
                     'fs': 0,
                     'autoplay': ${liveVideo},
                     'playlist': '${videoId}',
-                    'enablejsapi': 1,
-                    'origin': '${window.location.href}',
+                    'enablejsapi': 1
                 },
                 events: {
                     onReady: onPlayerReady,
