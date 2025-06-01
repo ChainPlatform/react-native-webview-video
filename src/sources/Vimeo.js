@@ -48,7 +48,7 @@ export function vimeoHTML(videoId, liveVideo) {
         let lastTimeUpdate = 0;
         let player;
         let options = {
-            loop: false,
+            loop: ${liveVideo},
             autopause: false,
             autoplay: ${liveVideo},
             byline: false,

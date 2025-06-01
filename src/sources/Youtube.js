@@ -43,9 +43,10 @@ export function youtubeHTML(videoId, liveVideo) {
                     'modestbranding': 1,
                     'controls': 0,
                     'rel': 0,
-                    'loop': 0,
+                    'loop': ${liveVideo},
                     'fs': 0,
-                    'autoplay': ${liveVideo}
+                    'autoplay': ${liveVideo},
+                    'playlist': '${videoId}'
                 },
                 events: {
                     onReady: onPlayerReady,

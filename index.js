@@ -1,13 +1,5 @@
 import { Component, createRef } from 'react';
-import {
-    Animated,
-    Platform,
-    View,
-    ActivityIndicator,
-    Pressable,
-    Text,
-    AppState
-} from 'react-native';
+import { Animated, Platform, View, ActivityIndicator, Pressable, Text, AppState } from 'react-native';
 import { DEFAULT_USER_AGENT, DEFAULT_YOUTUBE_URL, DEFAULT_VIMEO_URL, DEFAULT_VIDEOJS_URL, getTime } from './src/helpers';
 import { youtubeHTML } from './src/sources/Youtube';
 import { vimeoHTML } from './src/sources/Vimeo';
@@ -67,7 +59,9 @@ export default class Video extends Component {
     }
 
     onMessageRecieved = event => {
-        // console.log("Webview onMessage event ", event);
+        if (typeof this.props.debug != "undefined" && this.props.debug) {
+            console.log("Webview onMessage event ", event);
+        }
         try {
             let message;
             if (typeof event.nativeEvent.data == "object") {
@@ -184,7 +178,7 @@ export default class Video extends Component {
                 {this.renderLoading()}
             </View>
             {
-                this.props.poster != "undefined" && !this.state.playerPlaying ?
+                this.props.poster != "undefined" && this.state.playerPlaying == false ?
                     <Pressable style={{
                         width: '100%',
                         aspectRatio: 16 / 9,
@@ -198,7 +192,7 @@ export default class Video extends Component {
                     }}
                         onPress={() => {
                             if (typeof this.props.liveVideo == "undefined" ||
-                                (typeof this.props.liveVideo != "undefined" && !this.props.liveVideo)) {
+                                (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)) {
                                 this.setPlaying();
                             }
                         }}>
@@ -231,8 +225,8 @@ export default class Video extends Component {
                                     alignItems: 'flex-start',
                                 }}>
                                     {(typeof this.props.liveVideo == "undefined" ||
-                                        (typeof this.props.liveVideo != "undefined" && !this.props.liveVideo)) ?
-                                        (!this.state.playerPlaying && this.state.onPlay ?
+                                        (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)) ?
+                                        (this.state.playerPlaying == false && this.state.onPlay ?
                                             <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
                                             <PlaySVG width={largeButtonWidth} color={buttonColor} />)
                                         : null
@@ -308,7 +302,7 @@ export default class Video extends Component {
                 }}>
                     {typeof this.props.liveVideo == "undefined" ? (this.state.playerPlaying ?
                         <PauseSVG width={buttonWidth} color={buttonColor} /> :
-                        (!this.state.playerPlaying && this.state.onPlay ?
+                        (this.state.playerPlaying == false && this.state.onPlay ?
                             <ReplaySVG width={buttonWidth} color={buttonColor} /> :
                             <PlaySVG width={buttonWidth} color={buttonColor} />)
                     ) : <LivingSVG width={buttonWidth} color={buttonColor} />}
@@ -424,11 +418,11 @@ export default class Video extends Component {
 
     setVideoPlay() {
         if (this.webVideoRef && this.webVideoRef.current) {
-            if (!this.state.playerPlaying && this.state.onPlay) {
+            if (this.state.playerPlaying == false && this.state.onPlay) {
                 this.setState({ progressBar: "0%", progressTime: "00:00" });
             }
             this.webVideoRef.current.postMessage(JSON.stringify({ event: "playVideo", data: null }), '*');
-            if (!this.state.playerPlaying && typeof this.props.videoPlaying != "undefined") {
+            if (this.state.playerPlaying == false && typeof this.props.videoPlaying != "undefined") {
                 this.props.videoPlaying();
             }
         }
@@ -455,22 +449,26 @@ export default class Video extends Component {
     }
 
     setPlaying() {
-        if (!this.state.playerPlaying && this.state.onPlay) {
+        let playerPlaying = false;
+        let onPlay = false;
+        if (this.state.playerPlaying == false && this.state.onPlay) {
             this.setState({ progressBar: "0%", progressTime: "00:00" });
         }
         let state = this.state.playerPlaying ? "pauseVideo" : "playVideo";
         this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
-        if (!this.state.playerPlaying && typeof this.props.videoPlaying != "undefined") {
+        if (this.state.playerPlaying == false && typeof this.props.videoPlaying != "undefined") {
             this.props.videoPlaying();
+            playerPlaying = true;
+            onPlay = true;
         }
         if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
             this.props.videoPause();
         }
-        this.setState({ playerPlaying: !this.state.playerPlaying, onPlay: !this.state.onPlay });
+        this.setState({ playerPlaying: playerPlaying, onPlay: onPlay });
     }
 
     setVolume() {
-        let state = !this.state.volumeOn ? "volumeOn" : "volumeOff";
+        let state = this.state.volumeOn == false ? "volumeOn" : "volumeOff";
         this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
         this.setState({ volumeOn: !this.state.volumeOn });
     }
@@ -506,7 +504,7 @@ export default class Video extends Component {
     }
 
     renderLoading() {
-        return !this.state.playerReady && (
+        return this.state.playerReady == false && (
             <View style={{
                 flex: 1,
                 zIndex: 1000,
