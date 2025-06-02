@@ -78,6 +78,10 @@ export default class Video extends Component {
                             this.props.videoEnd();
                         }
                         this.setStop();
+                    } else if (message.data == 2) {
+                        if (typeof this.props.videoPause != "undefined") {
+                            this.props.videoPause();
+                        }
                     }
                     break;
                 case 'infoDelivery':

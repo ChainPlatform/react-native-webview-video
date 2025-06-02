@@ -96,6 +96,9 @@ export function videoJSHTML(videoId, liveVideo, jsVersion = "", jsLink = "", css
                 var duration = player.duration();
                 sendMessageToParent({ eventType: "initialDelivery", data: { duration: duration, currentTime: 0 } });
             });
+            player.on('pause', function (data) {
+                sendMessageToParent({ eventType: "playerStateChange", data: 2, infos: data })
+            });
             player.on('ended', function () {
                 sendMessageToParent({ eventType: "playerStateChange", data: 0 });
             });

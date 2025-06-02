@@ -111,6 +111,9 @@ export function vimeoHTML(videoId, liveVideo) {
                     }).catch(function (error) { });
                 }, 250);
             });
+            player.on('pause', function (data) {
+                sendMessageToParent({ eventType: "playerStateChange", data: 2, infos: data })
+            });
             player.on('ended', function () {
                 if (updateTime) { clearInterval(updateTime); }
                 sendMessageToParent({ eventType: "playerStateChange", data: 0 })

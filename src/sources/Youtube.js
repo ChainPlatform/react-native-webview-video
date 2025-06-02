@@ -71,7 +71,7 @@ export function youtubeHTML(videoId, liveVideo) {
             sendMessageToParent({ eventType: "playerReady", data: null })
         }
         function onPlayerStateChange(e) {
-            sendMessageToParent({ eventType: "playerStateChange", data: e.data })
+            sendMessageToParent({ eventType: "playerStateChange", data: e.data, infos: e })
         }
         function sendMessageToParent(event) {
             (window.ReactNativeWebView || window.parent || window).postMessage(JSON.stringify(event), '*');
