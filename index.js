@@ -480,7 +480,7 @@ export default class Video extends Component {
             let progressTime = getTime(currentTime);
             if ((progressTime != "00:00" && progressTime != this.state.progressTime) || isInit) {
                 if (typeof this.props.videoDuration != "undefined") {
-                    this.props.videoDuration({ currentTime: currentTime, duration: totalTime });
+                    this.props.videoDuration({ currentTime: currentTime, duration: totalTime, isInit: isInit });
                 }
                 if (currentTime > 0) {
                     let progressBar = ((currentTime * 100) / this.state.duration) + "%";
