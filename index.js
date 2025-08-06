@@ -44,9 +44,15 @@ export default class Video extends Component {
     }
 
     _handleAppStateChange = currentAppState => {
+        if (typeof this.props.debug != "undefined" && this.props.debug) {
+            // console.log("_handleAppStateChange ", this.state);
+        }
         if (currentAppState === 'background' && this.state.playerPlaying) {
-            if (typeof this.props.liveVideo == "undefined") {
-                this.setPlaying();
+            if (
+                typeof this.props.liveVideo == "undefined" ||
+                (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)
+            ) {
+                this.setPause();
             }
         }
     }
@@ -137,11 +143,11 @@ export default class Video extends Component {
         let liveVideo = typeof this.props.liveVideo != "undefined" ? this.props.liveVideo : false;
         switch (videoSource) {
             case "youtube":
-                liveVideo = liveVideo ? 1 : 0;
+                let isLiveVideo = liveVideo ? 1 : 0;
                 if (typeof this.props.useRemote != "undefined" && this.props.useRemote == true) {
-                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + liveVideo };
+                    loadContent = { uri: DEFAULT_YOUTUBE_URL + '?videoId=' + videoId + '&videoType=' + videoType + '&liveVideo=' + isLiveVideo };
                 } else {
-                    loadContent = { html: youtubeHTML(videoId, liveVideo, videoType) };
+                    loadContent = { html: youtubeHTML(videoId, isLiveVideo, videoType) };
                 }
                 break;
             case "vimeo":
@@ -168,15 +174,23 @@ export default class Video extends Component {
         const content = this.getContent();
         const buttonColor = typeof this.props.buttonColor != "undefined" ? this.props.buttonColor : "#FFFFFF";
         const largeButtonWidth = typeof this.props.largeButtonWidth != "undefined" ? this.props.largeButtonWidth : 60;
-        return (<View pointerEvents={this.state.playerReady ? "auto" : "none"}
-            style={{ alignItems: 'flex-start', alignSelf: 'flex-start', textAlign: 'flex-start', width: '100%' }}>
-            <View pointerEvents="none"
+        return (<View PointerEvent={this.state.playerReady ? "auto" : "none"}
+            style={{
+                alignItems: 'flex-start',
+                alignSelf: 'flex-start',
+                textAlign: 'flex-start',
+                width: '100%',
+                pointerEvents: this.state.playerReady ? "auto" : "none"
+            }}>
+            <View
+                PointerEvent={"none"}
                 style={{
                     alignItems: 'flex-start',
                     alignSelf: 'flex-start',
                     textAlign: 'flex-start',
                     width: '100%',
-                    aspectRatio: 16 / 9
+                    aspectRatio: 16 / 9,
+                    pointerEvents: "none"
                 }}>
                 {this.renderWebview(content)}
                 {this.renderLoading()}
@@ -228,12 +242,15 @@ export default class Video extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'flex-start',
                                 }}>
-                                    {(typeof this.props.liveVideo == "undefined" ||
-                                        (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)) ?
-                                        (this.state.playerPlaying == false && this.state.onPlay ?
-                                            <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
-                                            <PlaySVG width={largeButtonWidth} color={buttonColor} />)
-                                        : null
+                                    {
+                                        (
+                                            typeof this.props.liveVideo == "undefined" ||
+                                            (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)
+                                        ) ?
+                                            (this.state.playerPlaying == false && this.state.onPlay ?
+                                                <ReplaySVG width={largeButtonWidth} color={buttonColor} /> :
+                                                <PlaySVG width={largeButtonWidth} color={buttonColor} />)
+                                            : null
                                     }
                                 </View> : null
                             }
@@ -300,11 +317,19 @@ export default class Video extends Component {
                     justifyContent: 'center',
                     alignItems: 'flex-start',
                 }} onPress={() => {
-                    if (typeof this.props.liveVideo == "undefined") {
-                        this.setPlaying();
+                    if (typeof this.props.liveVideo == "undefined" ||
+                        (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)) {
+                        if (this.state.playerPlaying) {
+                            this.setPause();
+                        } else {
+                            this.setPlaying();
+                        }
                     }
                 }}>
-                    {typeof this.props.liveVideo == "undefined" ? (this.state.playerPlaying ?
+                    {(
+                        typeof this.props.liveVideo == "undefined" ||
+                        (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == false)
+                    ) ? (this.state.playerPlaying ?
                         <PauseSVG width={buttonWidth} color={buttonColor} /> :
                         (this.state.playerPlaying == false && this.state.onPlay ?
                             <ReplaySVG width={buttonWidth} color={buttonColor} /> :
@@ -336,7 +361,8 @@ export default class Video extends Component {
                             marginRight: spacing,
                             minWidth: textContainerMinWidth
                         }}>
-                            <Text style={{ fontSize: textSize, fontWeight: '600', color: textColor }}>{typeof this.props.liveVideo != "undefined" && this.props.liveVideo ? "--:--" : this.state.progressTime}</Text>
+                            <Text style={{ fontSize: textSize, fontWeight: '600', color: textColor }}>{
+                                (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == true) ? "--:--" : this.state.progressTime}</Text>
                         </View>
                         <View style={{
                             flexDirection: 'column',
@@ -386,7 +412,11 @@ export default class Video extends Component {
                             fontWeight: '600',
                             minWidth: textContainerMinWidth
                         }}>
-                            <Text style={{ fontSize: textSize, color: textColor }}>{typeof this.props.liveVideo != "undefined" && this.props.liveVideo ? "--:--" : this.state.totalTime}</Text>
+                            <Text style={{ fontSize: textSize, color: textColor }}>
+                                {
+                                    (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == true) ? "--:--" : this.state.totalTime
+                                }
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -434,47 +464,90 @@ export default class Video extends Component {
     }
 
     setPlayerReady() {
-        this.setState({ playerReady: true, playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" });
+        this.setState({ playerReady: true, playerPlaying: false, onPlay: false, progressBar: "0%", progressTime: "00:00" }, this.living());
     }
 
     setStop() {
-        this.webVideoRef.current.postMessage(JSON.stringify({ event: "stopVideo", data: null }), '*');
-        this.setState({ playerPlaying: false, progressBar: "100%" });
+        if (this.webVideoRef && this.webVideoRef.current) {
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "stopVideo", data: null }), '*');
+            this.setState({ playerPlaying: false, progressBar: "100%" });
+        }
     }
 
     living() {
-        this.setState({ progressBar: "0%", progressTime: "00:00" });
-        let state = "playVideo";
-        this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
-        if (typeof this.props.videoPlaying != "undefined") {
-            this.props.videoPlaying();
+        if (this.webVideoRef && this.webVideoRef.current &&
+            typeof this.props.liveVideo != "undefined" && this.props.liveVideo == true) {
+            this.setState({ progressBar: "0%", progressTime: "00:00" });
+            let state = "playVideo";
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
+            if (typeof this.props.videoPlaying != "undefined") {
+                this.props.videoPlaying();
+            }
+            this.setState({ playerPlaying: true, onPlay: true });
         }
-        this.setState({ playerPlaying: true, onPlay: true });
+    }
+
+    setPause() {
+        if (this.webVideoRef && this.webVideoRef.current) {
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "pauseVideo", data: null }), '*');
+            if (typeof this.props.videoPause != "undefined") {
+                this.props.videoPause();
+            }
+            this.setState({ playerPlaying: false, onPlay: false });
+        }
     }
 
     setPlaying() {
-        let playerPlaying = false;
-        let onPlay = false;
-        if (this.state.playerPlaying == false && this.state.onPlay) {
-            this.setState({ progressBar: "0%", progressTime: "00:00" });
+        if (typeof this.props.debug != "undefined" && this.props.debug) {
+            console.log("setPlaying ", this.state);
         }
-        let state = this.state.playerPlaying ? "pauseVideo" : "playVideo";
-        this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
-        if (this.state.playerPlaying == false && typeof this.props.videoPlaying != "undefined") {
-            this.props.videoPlaying();
-            playerPlaying = true;
-            onPlay = true;
+        if (this.webVideoRef && this.webVideoRef.current) {
+            // let playerPlaying = true;
+            // let onPlay = true;
+            let progressBar = this.state.progressBar;
+            let progressTime = this.state.progressTime;
+            if (this.state.playerPlaying == false && this.state.onPlay) {
+                progressTime = "00:00";
+                progressBar = "0%";
+                // this.setState({ progressBar: "0%", progressTime: "00:00" });
+            }
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: "playVideo", data: null }), '*');
+            // if (this.state.playerPlaying == false && typeof this.props.videoPlaying != "undefined") {
+            if (typeof this.props.videoPlaying != "undefined") {
+                this.props.videoPlaying();
+            }
+            // playerPlaying = true;
+            // onPlay = true;
+            // }
+            // if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
+            //     this.props.videoPause();
+            // }
+            this.setState({ playerPlaying: true, onPlay: true, progressBar: progressBar, progressTime: progressTime });
         }
-        if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
-            this.props.videoPause();
-        }
-        this.setState({ playerPlaying: playerPlaying, onPlay: onPlay });
+        // let playerPlaying = false;
+        // let onPlay = false;
+        // if (this.state.playerPlaying == false && this.state.onPlay) {
+        //     this.setState({ progressBar: "0%", progressTime: "00:00" });
+        // }
+        // let state = this.state.playerPlaying ? "pauseVideo" : "playVideo";
+        // this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
+        // if (this.state.playerPlaying == false && typeof this.props.videoPlaying != "undefined") {
+        //     this.props.videoPlaying();
+        //     playerPlaying = true;
+        //     onPlay = true;
+        // }
+        // if (this.state.playerPlaying && typeof this.props.videoPause != "undefined") {
+        //     this.props.videoPause();
+        // }
+        // this.setState({ playerPlaying: playerPlaying, onPlay: onPlay });
     }
 
     setVolume() {
-        let state = this.state.volumeOn == false ? "volumeOn" : "volumeOff";
-        this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
-        this.setState({ volumeOn: !this.state.volumeOn });
+        if (this.webVideoRef && this.webVideoRef.current) {
+            let state = this.state.volumeOn == false ? "volumeOn" : "volumeOff";
+            this.webVideoRef.current.postMessage(JSON.stringify({ event: state, data: null }), '*');
+            this.setState({ volumeOn: !this.state.volumeOn });
+        }
     }
 
     getProgressTime(message, isInit = false) {
@@ -488,7 +561,7 @@ export default class Video extends Component {
                 }
                 if (currentTime > 0) {
                     let progressBar = ((currentTime * 100) / this.state.duration) + "%";
-                    if (typeof this.props.liveVideo != "undefined" && this.props.liveVideo) {
+                    if (typeof this.props.liveVideo != "undefined" && this.props.liveVideo == true) {
                         progressBar = "100%";
                         let playerPlaying = true;
                         let onPlay = true;
